@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollBar?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="MainBox" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.MainController">
+   <children>
+      <TitledPane alignment="TOP_CENTER" animated="false" collapsible="false" expanded="false" text="BuggiTracker" textAlignment="CENTER">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+        </content>
+         <font>
+            <Font size="24.0" />
+         </font>
+      </TitledPane>
+      <AnchorPane prefHeight="244.0" prefWidth="1280.0" style="-fx-background-color: ORANGE;">
+         <children>
+            <Button fx:id="addProj" layoutX="33.0" layoutY="55.0" mnemonicParsing="false" onAction="#showCrprojOp" prefHeight="50.0" prefWidth="123.0" style="-fx-background-color: LIGHTGREEN;" text="+ Project">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Button>
+            <Button fx:id="addTick" layoutX="176.0" layoutY="54.0" mnemonicParsing="false" onAction="#showCrTickOp" prefHeight="50.0" prefWidth="123.0" style="-fx-background-color: LIGHTGREEN;" text="+ Ticket">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Button>
+            <Label alignment="CENTER" layoutX="734.0" layoutY="93.0" prefHeight="17.0" prefWidth="138.0" text="Projects">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Button fx:id="refreshBtn" layoutX="1121.0" layoutY="75.0" mnemonicParsing="false" onAction="#refreshList" prefHeight="47.0" prefWidth="121.0" text="Refresh List">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Button>
+            <Button fx:id="getInfo" layoutX="991.0" layoutY="86.0" mnemonicParsing="false" onAction="#getInfo" prefHeight="37.0" prefWidth="101.0" text="Get Info">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Button>
+         </children>
+      </AnchorPane>
+      <HBox prefHeight="655.0" prefWidth="1280.0" style="-fx-background-color: LIGHTGREY;">
+         <children>
+            <AnchorPane>
+               <children>
+                  <ButtonBar buttonMinWidth="20.0" layoutX="14.0" layoutY="19.0" maxWidth="300.0" prefHeight="40.0" prefWidth="300.0">
+                    <buttons>
+                        <TextField prefHeight="26.0" />
+                      <Button minWidth="40.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="30.0" text="Search" />
+                    </buttons>
+                  </ButtonBar>
+               </children>
+            </AnchorPane>
+            <ListView fx:id="projList" onMouseClicked="#itemSelected" prefHeight="543.0" prefWidth="954.0" />
+            <ScrollBar orientation="VERTICAL" />
+         </children>
+      </HBox>
+   </children>
+</VBox>
