@@ -109,6 +109,35 @@ public class ProjectDAO {
 		}
 		return new Project(nm, date, description);
 	}
+	
+	public static ArrayList<Project> getAll(String name) {
+		Connection connect = DBConnection.connect();
+		ArrayList<Project> projects = new ArrayList<Project>();
+		String nm = "";
+		String date = "";
+		String description = "";
+
+		String connectQuery = "SELECT name, date, description FROM projects";
+		
+
+		try {
+			Statement statement = connect.createStatement();
+			ResultSet queryOutput = statement.executeQuery(connectQuery);
+
+			while (queryOutput.next()) {
+				if (queryOutput.getString("name").toUpperCase().contains(name.toUpperCase())) {
+					nm = queryOutput.getString("name");
+					date = queryOutput.getString("date");
+					description = queryOutput.getString("description");
+					projects.add(new Project(nm, date, description));
+				}
+			}
+		connect.close();
+		} catch (Exception e) {
+
+		}
+		return projects;
+	}
 
 	public static void close() {
 		DBConnection.close();

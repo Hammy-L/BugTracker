@@ -81,6 +81,36 @@ public class TicketDAO {
 		}
 		return new Ticket(title, description);
 	}
+	
+	public static ArrayList<Ticket> getAll(String sub) {
+		Connection connect = DBConnection.connect();
+		ArrayList<Ticket> tickets = new ArrayList<Ticket>();
+		String proj = "";
+		String title = "";
+		String description = "";
+
+		String connectQuery = "SELECT projName, title, description FROM tickets";
+
+		try {
+			Statement statement = connect.createStatement();
+			ResultSet queryOutput = statement.executeQuery(connectQuery);
+
+			while (queryOutput.next()) {
+				if (queryOutput.getString("title").toUpperCase().contains(sub.toUpperCase())) {
+					proj = queryOutput.getString("projName");
+					title = queryOutput.getString("title");
+					description = queryOutput.getString("description");
+					Ticket tick = new Ticket(title, description);
+					tick.setProjname(proj);
+					tickets.add(tick);
+				}
+			}
+		connect.close();
+		} catch (Exception e) {
+
+		}
+		return tickets;
+	}
 
 	/**
 	 * Gets all the comments assigned to the designated ticket

@@ -5,9 +5,14 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import DataAccessLayer.DBConnection;
+import DataAccessLayer.ProjectDAO;
+import DataAccessLayer.TicketDAO;
+import application.Project;
+import application.Ticket;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,7 +23,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 
 public class MainController implements Initializable {
 
@@ -30,11 +41,32 @@ public class MainController implements Initializable {
 	@FXML Button addTick;
 	@FXML Button refreshBtn;
 	@FXML Button getInfo;
+	@FXML ToggleButton tickToggle;
+	@FXML ToggleButton projToggle;
+	@FXML TextField searchBar;
+	@FXML Button searchBtn;
+	@FXML ListView<String> searchList;
+	@FXML Label searchLabel;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		refreshList();
 		getInfo.setDisable(true);
+		searchList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
+            @Override
+            public ListCell<String> call(final ListView<String> list) {
+                return new ListCell<String>() {
+                    {
+                        Text text = new Text();
+                        text.wrappingWidthProperty().bind(searchList.widthProperty().subtract(20));
+                        text.textProperty().bind(itemProperty());
+
+                        setPrefWidth(0);
+                        setGraphic(text);
+                    }
+                };
+            }
+        });
 	}
 
 
@@ -149,6 +181,40 @@ public class MainController implements Initializable {
 		else {
 			getInfo.setDisable(true);
 		}
+	}
+
+
+/**
+ * Searches and return items containing a substring into the searchList
+ */
+	@FXML public void search(ActionEvent event) {
+		searchList.getItems().clear();
+		ArrayList<Project> projects = new ArrayList<Project>();
+		ArrayList<Ticket> tickets = new ArrayList<Ticket>();
+		if (!(projToggle.isSelected() || tickToggle.isSelected())) {
+			searchLabel.setText("Select an item category to search for...");
+		}
+		else if (searchBar.getText().isEmpty()) {
+			searchLabel.setText("Field is empty...");
+		}
+		else {
+			if (projToggle.isSelected()) {
+				projects = ProjectDAO.getAll(searchBar.getText());
+				for (Project proj : projects)
+					searchList.getItems().addAll("Project: " + proj.getName());
+			}
+			if (tickToggle.isSelected()) {
+				tickets = TicketDAO.getAll(searchBar.getText());
+				for (Ticket tick : tickets)
+					searchList.getItems().addAll("(in Project: " + tick.getProjname() + ") Ticket: " + tick.getTitle());
+			}
+			
+			if (searchList.getItems().isEmpty()) {
+				searchLabel.setText("No items found...");
+			}
+		}
+		
+		
 	}
 
 }

@@ -7,6 +7,7 @@
 <?import javafx.scene.control.ScrollBar?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -53,14 +54,23 @@
       </AnchorPane>
       <HBox prefHeight="655.0" prefWidth="1280.0" style="-fx-background-color: LIGHTGREY;">
          <children>
-            <AnchorPane>
+            <AnchorPane prefHeight="543.0" prefWidth="352.0">
                <children>
-                  <ButtonBar buttonMinWidth="20.0" layoutX="14.0" layoutY="19.0" maxWidth="300.0" prefHeight="40.0" prefWidth="300.0">
+                  <ButtonBar buttonMinWidth="20.0" layoutX="1.0" layoutY="39.0" maxWidth="326.0" prefHeight="40.0" prefWidth="326.0">
                     <buttons>
-                        <TextField prefHeight="26.0" />
-                      <Button minWidth="40.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="30.0" text="Search" />
+                        <TextField fx:id="searchBar" prefHeight="26.0" prefWidth="164.0" />
+                      <Button fx:id="searchBtn" minWidth="40.0" mnemonicParsing="false" onAction="#search" prefHeight="26.0" prefWidth="30.0" text="Search" />
                     </buttons>
                   </ButtonBar>
+                  <ToggleButton fx:id="projToggle" layoutX="141.0" layoutY="10.0" mnemonicParsing="false" text="Projects" />
+                  <ToggleButton fx:id="tickToggle" layoutX="222.0" layoutY="10.0" mnemonicParsing="false" text="Tickets" />
+                  <Label layoutX="10.0" layoutY="12.0" prefHeight="23.0" prefWidth="98.0" text="Search for:">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <ListView fx:id="searchList" layoutX="-4.0" layoutY="110.0" prefHeight="372.0" prefWidth="330.0" />
+                  <Label fx:id="searchLabel" alignment="CENTER" contentDisplay="CENTER" layoutY="83.0" prefHeight="17.0" prefWidth="327.0" text="Searched  items..." />
                </children>
             </AnchorPane>
             <ListView fx:id="projList" onMouseClicked="#itemSelected" prefHeight="543.0" prefWidth="954.0" />
