@@ -7,17 +7,14 @@ import java.sql.SQLException;
 public class DBConnection {
 	static Connection conn;
 
-	public static Connection connect() {
-
+	public static void connect() {
         try {
         	Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection("jdbc:sqlite:projects.db");
     		System.out.println( "Connected database successfully" );
-    		return conn;
         } catch ( Exception e ) {
             e.printStackTrace();
             System.exit(0);
-            return null;
         }
 	}
 
@@ -29,5 +26,9 @@ public class DBConnection {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static Connection conn() {
+		return conn;
 	}
 }

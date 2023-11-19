@@ -32,7 +32,7 @@ public class TicketController implements Initializable {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		Connection conn = DBConnection.connect();
+		Connection conn = DBConnection.conn();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		ArrayList<String> nameList = new ArrayList<>();
@@ -58,7 +58,6 @@ public class TicketController implements Initializable {
 			try {
 				rs.close();
 				ps.close();
-				conn.close();
 
 			} catch (SQLException e2) {
 				System.out.println(e2.toString());
@@ -73,6 +72,10 @@ public class TicketController implements Initializable {
 	 * @throws Exception
 	 */
 	public void createTick (ActionEvent event) throws Exception {
+		if (tickName.getText() == null || tickDesc.getText() == null || (String)projCombo.getValue() == null) {
+			return;
+		}
+		
 		String tickNm = tickName.getText();
 		String tickDsc = tickDesc.getText();
 		String projNm = (String)projCombo.getValue();

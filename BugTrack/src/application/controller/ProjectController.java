@@ -49,8 +49,6 @@ public class ProjectController {
 
 		ProjectDAO.insert(proj);
 
-		ProjectDAO.close();
-
 		((Node) event.getSource()).getScene().getWindow().hide();
 	}
 

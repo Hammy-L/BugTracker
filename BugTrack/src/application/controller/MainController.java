@@ -47,9 +47,13 @@ public class MainController implements Initializable {
 	@FXML Button searchBtn;
 	@FXML ListView<String> searchList;
 	@FXML Label searchLabel;
+	@FXML Button editBtn;
+	@FXML Button deleteBtn;
+	@FXML Button searchInfo;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		DBConnection.connect();
 		refreshList();
 		getInfo.setDisable(true);
 		searchList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
@@ -98,7 +102,7 @@ public class MainController implements Initializable {
 	@FXML public void refreshList() {
 		getInfo.setDisable(true);
 		projList.getItems().clear();
-		Connection connect = DBConnection.connect();
+		Connection connect = DBConnection.conn();
 
 		String connectQuery = "SELECT name FROM projects";
 
@@ -112,8 +116,6 @@ public class MainController implements Initializable {
 
 				projList.getItems().add(listOut);
 			}
-
-		connect.close();
 		} catch (Exception e) {
 
 		}
@@ -148,8 +150,10 @@ public class MainController implements Initializable {
  * @throws IOException
  */
 	@FXML public void getInfo(ActionEvent event) throws IOException {
+		String name;
 		int pos = projList.getSelectionModel().getSelectedIndex();
-		String name = projList.getItems().get(pos);
+		name = projList.getItems().get(pos);
+		
 
 		FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/info.fxml"));
         Parent root = loader.load();
@@ -175,7 +179,7 @@ public class MainController implements Initializable {
  * @param event User clicks an item in the project list
  */
 	@FXML public void itemSelected(MouseEvent event) {
-		if (!(projList.getSelectionModel().getSelectedItem() == null)) {
+		if (projList.getSelectionModel().getSelectedItem() != null) {
 			getInfo.setDisable(false);
 		}
 		else {
@@ -188,6 +192,10 @@ public class MainController implements Initializable {
  * Searches and return items containing a substring into the searchList
  */
 	@FXML public void search(ActionEvent event) {
+		searchInfo.setDisable(true);
+		deleteBtn.setDisable(true);
+		editBtn.setDisable(true);
+		
 		searchList.getItems().clear();
 		ArrayList<Project> projects = new ArrayList<Project>();
 		ArrayList<Ticket> tickets = new ArrayList<Ticket>();
@@ -201,20 +209,114 @@ public class MainController implements Initializable {
 			if (projToggle.isSelected()) {
 				projects = ProjectDAO.getAll(searchBar.getText());
 				for (Project proj : projects)
-					searchList.getItems().addAll("Project: " + proj.getName());
+					searchList.getItems().addAll("(Project: " + proj.getName() + ")");
 			}
 			if (tickToggle.isSelected()) {
 				tickets = TicketDAO.getAll(searchBar.getText());
 				for (Ticket tick : tickets)
-					searchList.getItems().addAll("(in Project: " + tick.getProjname() + ") Ticket: " + tick.getTitle());
+					searchList.getItems().addAll("(Project: " + tick.getProjname() + ") Ticket: " + tick.getTitle());
 			}
 			
 			if (searchList.getItems().isEmpty()) {
 				searchLabel.setText("No items found...");
 			}
+			else {
+				searchLabel.setText("Found!");
+			}
 		}
 		
 		
+	}
+
+
+
+	@FXML public void edit(ActionEvent event) throws IOException {
+		int pos = searchList.getSelectionModel().getSelectedIndex();
+		String name = searchList.getItems().get(pos);
+		
+		if (name.contains("Ticket: ")) {
+			searchLabel.setText("Sorry! Ticket editing not implemented yet!");
+			return;
+		}
+		
+		name = name.substring(name.indexOf(" ") + 1, name.indexOf(")"));
+		FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/editProj.fxml"));
+        Parent root = loader.load();
+
+
+
+		System.out.println("Got Info of " + name + "!");
+		EditProjController editControl = loader.getController();
+		editControl.setProjData(name);
+
+		Scene scene = new Scene(root);
+		Stage stage = new Stage();
+
+		stage.setScene(scene);
+		stage.show();
+	}
+	
+	
+	
+	@FXML public void delete(ActionEvent event) {
+		if (searchList.getSelectionModel().getSelectedItem() != null) {
+			String str = searchList.getSelectionModel().getSelectedItem();
+			if (str.contains("Ticket: ")) {
+				searchLabel.setText("Sorry! Ticket Deletion not implemented");
+			}
+			else {
+				
+				ProjectDAO.delete(str.substring(str.indexOf(" ") + 1, str.indexOf(")")));
+				refreshList();
+				search(event);
+			}
+		}
+	}
+	
+	
+	
+	@FXML public void searchInfo(ActionEvent event) throws IOException {
+		if (searchList.getSelectionModel().getSelectedItem() != null) {
+			String str = searchList.getSelectionModel().getSelectedItem();
+			if (str.contains("Ticket: ")) {
+				searchLabel.setText("Sorry! Ticket information is not implemented");
+			}
+			else {
+				int pos = searchList.getSelectionModel().getSelectedIndex();
+				str = searchList.getItems().get(pos);
+				str = str.substring(str.indexOf(" ") + 1, str.indexOf(")"));
+				
+				
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/info.fxml"));
+		        Parent root = loader.load();
+
+				System.out.println("Got Info of " + str + "!");
+				InfoController infoControl = loader.getController();
+				infoControl.setProjData(str);
+
+				Scene scene = new Scene(root);
+				Stage stage = new Stage();
+
+				stage.setScene(scene);
+				stage.show();
+			}
+		}
+		
+	}
+
+
+
+	@FXML public void searchSelected(MouseEvent event) {
+		if (searchList.getSelectionModel().getSelectedItem() != null) {
+			searchInfo.setDisable(false);
+			deleteBtn.setDisable(false);
+			editBtn.setDisable(false);
+		}
+		else {
+			searchInfo.setDisable(true);
+			deleteBtn.setDisable(true);
+			editBtn.setDisable(true);
+		}
 	}
 
 }

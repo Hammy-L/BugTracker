@@ -96,7 +96,7 @@ public class InfoController implements Initializable {
 	 *
 	 */
 	@FXML public void selectTick() {
-		if (!(tickList.getSelectionModel().getSelectedItem() == null)) {
+		if (tickList.getSelectionModel().getSelectedItem() != null) {
 			String name = tickList.getSelectionModel().getSelectedItem();
 			Ticket selected = TicketDAO.get(projectName, name);
 			commList.getItems().setAll(TicketDAO.getComments(selected));

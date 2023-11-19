@@ -69,8 +69,23 @@
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <ListView fx:id="searchList" layoutX="-4.0" layoutY="110.0" prefHeight="372.0" prefWidth="330.0" />
+                  <ListView fx:id="searchList" layoutX="-4.0" layoutY="110.0" onMouseClicked="#searchSelected" prefHeight="372.0" prefWidth="330.0" />
                   <Label fx:id="searchLabel" alignment="CENTER" contentDisplay="CENTER" layoutY="83.0" prefHeight="17.0" prefWidth="327.0" text="Searched  items..." />
+                  <Button fx:id="editBtn" disable="true" layoutX="111.0" layoutY="492.0" mnemonicParsing="false" onAction="#edit" prefHeight="37.0" prefWidth="101.0" text="Edit">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="deleteBtn" disable="true" layoutX="216.0" layoutY="492.0" mnemonicParsing="false" onAction="#delete" prefHeight="37.0" prefWidth="101.0" text="Delete">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="searchInfo" disable="true" layoutX="9.0" layoutY="492.0" mnemonicParsing="false" onAction="#searchInfo" prefHeight="37.0" prefWidth="101.0" text="Get Info">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Button>
                </children>
             </AnchorPane>
             <ListView fx:id="projList" onMouseClicked="#itemSelected" prefHeight="543.0" prefWidth="954.0" />

@@ -3,17 +3,17 @@ package DataAccessLayer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 
 import application.Ticket;
 
-public class TicketDAO {
-	Connection connection;
+public class TicketDAO extends DBConnection {
+	static Connection connection = conn;
 
 	public TicketDAO () {
-		connection = DBConnection.connect();
 		if (connection == null) {
 			System.exit(1);
 		}
@@ -22,21 +22,20 @@ public class TicketDAO {
 	public boolean isDbConnected() {
 		return connection != null;
 	}
-
+	
 	/**
 	 * Inserts the desired ticket into the database
 	 *
 	 * @param t the desired ticket
 	 */
-	public static void insert(Ticket t) {
-		Connection con = DBConnection.connect();	// Connect to Database
+	public static void insert(Ticket t) {		// Connect to Database
 		PreparedStatement ps = null;
 		String name = t.getProjname();				// These lines convert the Ticket
 		String title = t.getTitle();				// data into string data for the
 		String desc = t.getDescription();			// database to handle
 		try {
 			String sql = "INSERT INTO tickets(projname,title,description) VALUES(?,?,?)";
-			ps = con.prepareStatement(sql);
+			ps = connection.prepareStatement(sql);
 			ps.setString(1, name);
 			ps.setString(2, title);
 			ps.setString(3, desc);
@@ -55,8 +54,7 @@ public class TicketDAO {
 	 * @param name	ticket title
 	 * @return		The desired ticket being searched for
 	 */
-	public static Ticket get(String projN, String name) {
-		Connection connect = DBConnection.connect();
+	public static Ticket get(String projN, String name) {	
 		String proj = "";
 		String title = "";
 		String description = "";
@@ -64,7 +62,7 @@ public class TicketDAO {
 		String connectQuery = "SELECT projName, title, description FROM tickets";
 
 		try {
-			Statement statement = connect.createStatement();
+			Statement statement = connection.createStatement();
 			ResultSet queryOutput = statement.executeQuery(connectQuery);
 
 			while (queryOutput.next()) {
@@ -75,7 +73,6 @@ public class TicketDAO {
 					break;
 				}
 			}
-		connect.close();
 		} catch (Exception e) {
 
 		}
@@ -83,7 +80,6 @@ public class TicketDAO {
 	}
 	
 	public static ArrayList<Ticket> getAll(String sub) {
-		Connection connect = DBConnection.connect();
 		ArrayList<Ticket> tickets = new ArrayList<Ticket>();
 		String proj = "";
 		String title = "";
@@ -92,7 +88,7 @@ public class TicketDAO {
 		String connectQuery = "SELECT projName, title, description FROM tickets";
 
 		try {
-			Statement statement = connect.createStatement();
+			Statement statement = connection.createStatement();
 			ResultSet queryOutput = statement.executeQuery(connectQuery);
 
 			while (queryOutput.next()) {
@@ -105,7 +101,6 @@ public class TicketDAO {
 					tickets.add(tick);
 				}
 			}
-		connect.close();
 		} catch (Exception e) {
 
 		}
@@ -120,11 +115,10 @@ public class TicketDAO {
 	 */
 	public static ArrayList<String> getComments(Ticket t) {
 		ArrayList<String> commentList = new ArrayList<>();
-		Connection connect = DBConnection.connect();
 
 		String connectQuery = "SELECT tickName, date, description FROM comments";
 		try {
-			Statement statement = connect.createStatement();
+			Statement statement = connection.createStatement();
 			ResultSet queryOutput = statement.executeQuery(connectQuery);
 
 			while (queryOutput.next()) {
@@ -134,13 +128,38 @@ public class TicketDAO {
 					commentList.add(n);
 				}
 			}
-
-		connect.close();
 		} catch (Exception e) {
 
 		}
 		Collections.sort(commentList);
 		return commentList;
+	}
+	
+	public static void delete(String proj, String s) {
+		try {
+			ArrayList<String> comments = getComments(get(proj, s));
+			for (String comment : comments) {
+				CommentDAO.delete(comment);
+			}
+			PreparedStatement deleteStatement = connection.prepareStatement("DELETE FROM tickets WHERE title = ?");
+			deleteStatement.setString(1, s);
+			deleteStatement.execute();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void updateProj(String old, String newN, String t) {
+		try {
+			PreparedStatement statement = connection.prepareStatement("UPDATE tickets SET projname = ? WHERE projname = ?");
+			statement.setString(1, newN);
+			statement.setString(2, old);
+			statement.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public static void close() {
